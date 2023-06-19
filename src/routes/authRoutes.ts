@@ -1,9 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { verifyAuth } from '../middlewares/auth';
-import { authCheck } from '../controllers/authController';
+import { authCheck, emailVerifyCheck } from '../controllers/authController';
 
 const router: Router = Router();
 
 router.get('/user',verifyAuth,authCheck);
+
+router.get('/:username/verify/:token',emailVerifyCheck);
 
 export default router;

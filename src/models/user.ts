@@ -44,6 +44,10 @@ const userSchema = new Schema({
   blocked: {
     type: Boolean,
   },
+  verified: {
+    type: Boolean,
+    default:false,
+  },
 });
 
 export const User = model("user", userSchema);

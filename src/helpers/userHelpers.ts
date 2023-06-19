@@ -1,8 +1,9 @@
 import { ParsedQs } from "qs";
 import { User } from "../models/user";
-import { comparePassword, hashPassword } from "../utils/password";
-import { generateJwt } from "../utils/jwt";
+import { comparePassword, hashPassword } from "../services/password";
+import { generateJwt } from "../services/jwt";
 import { UserDocument } from "../interfaces/user.interface";
+import { verificationEmail } from "../services/nodemailer";
 
 export const fetchUsersData = async (
   username: string | string[] | ParsedQs | ParsedQs[]
@@ -20,8 +21,8 @@ export const registerUsersData = async (credentials: any) => {
     let { email, username, password, profilePic } = credentials;
     if (profilePic === undefined) profilePic = "";
     password = await hashPassword(password);
-    const user = new User({ email, username, password, profilePic });
-    const dbdata = await user.save();
+    const dbdata = new User({ email, username, password, profilePic }).save();
+    verificationEmail(email, username);
     const token = generateJwt(dbdata);
     return { status: 200, userToken: token };
   } catch (error) {
@@ -54,14 +55,16 @@ export const loginUsersData = async (credentials: {
     }
     const validPassword = await comparePassword(password, user?.password);
     if (validPassword) {
-      const token = generateJwt(user);
-      return { status: 200, userToken: token };
+      if (user?.verified === true) {
+        const token = generateJwt(user);
+        return { status: 200, userToken: token };
+      } else {
+        return { status: 401, error: { msg: "email not verified" } };
+      }
     } else {
       return { status: 401, error: { msg: "Wrong password" } };
     }
   } catch (error) {
-    console.log(error.message);
-
     if (error?.message.includes("Username")) {
       error.msg = "No account with this username";
     } else if (error?.message.includes("Email")) {
@@ -70,5 +73,18 @@ export const loginUsersData = async (credentials: {
       error.msg = "Wrong password";
     }
     return { status: 401, error };
+  }
+};
+
+export const updatePass = async (email: string, newPass: string) => {
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return { msg: "no account with this email",stat:false };
+    const password = await hashPassword(newPass);
+    await User.updateOne({ email }, { $set: { password,verified:false } });
+    verificationEmail(email, user?.username);
+    return { stat: true };
+  } catch (error) {
+    console.log(error);
   }
 };

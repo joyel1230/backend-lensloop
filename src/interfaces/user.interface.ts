@@ -9,4 +9,5 @@ export interface UserDocument extends Document {
     profilePic?: string;
     online?: boolean;
     blocked?: boolean;
+    verified?:boolean;
 }

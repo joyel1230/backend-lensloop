@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getUsers,
+  postForgotUser,
   postLoginUser,
   postRegisterUser,
 } from "../controllers/userController";
@@ -12,5 +13,7 @@ router.get("/", getUsers);
 router.post("/register", postRegisterUser);
 
 router.post("/login", postLoginUser);
+
+router.post("/forgot", postForgotUser);
 
 export default router;

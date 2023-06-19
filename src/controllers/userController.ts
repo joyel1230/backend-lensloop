@@ -3,7 +3,9 @@ import {
   fetchUsersData,
   loginUsersData,
   registerUsersData,
+  updatePass,
 } from "../helpers/userHelpers";
+import { User } from "../models/user";
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -16,23 +18,46 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 export const postRegisterUser = async (req: Request, res: Response) => {
-  const { cred } = req.body;
-  const data = await registerUsersData(cred);
-  if (data?.status === 200) {
-    res.json(data);
-  } else {
-    res.status(401).json(data);
+  try {
+    const { cred } = req.body;
+    const data = await registerUsersData(cred);
+    if (data?.status === 200) {
+      res.json(data);
+    } else {
+      res.status(401).json(data);
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 
 export const postLoginUser = async (req: Request, res: Response) => {
-  const {
-    credentials,
-  }: { credentials: { emailOrUsername: string; password: string } } = req.body;
-  const data = await loginUsersData(credentials);
-  if (data?.status === 200) {
-    res.json(data);
-  } else {
-    res.status(401).json(data);
+  try {
+    const {
+      credentials,
+    }: { credentials: { emailOrUsername: string; password: string } } =
+      req.body;
+    const data = await loginUsersData(credentials);
+    if (data?.status === 200) {
+      res.json(data);
+    } else {
+      res.status(401).json(data);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const postForgotUser = async (req: Request, res: Response) => {
+  try {
+    const { email, newPass } = req.body;
+    const response = await updatePass(email, newPass);
+    if (response.stat) {
+      res.status(200).json(response);
+    } else {
+      res.status(400).json(response);
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
