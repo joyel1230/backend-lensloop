@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import { verifyAuth } from '../middlewares/auth';
 import { authCheck, emailVerifyCheck } from '../controllers/authController';
 

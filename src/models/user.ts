@@ -10,6 +10,9 @@ const userSchema = new Schema({
     trim: true,
     minlength: 4,
     maxlength: 30,
+    set: function(value:string) {
+      return value.toLowerCase();
+    }
   },
   email: {
     type: String,
@@ -29,6 +32,7 @@ const userSchema = new Schema({
   profilePic: {
     type: String,
     trim: true,
+    default:'https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg'
   },
   chatUsers: {
     type: [
@@ -43,6 +47,7 @@ const userSchema = new Schema({
   },
   blocked: {
     type: Boolean,
+    default:false,
   },
   verified: {
     type: Boolean,

@@ -19,9 +19,8 @@ export const fetchUsersData = async (
 export const registerUsersData = async (credentials: any) => {
   try {
     let { email, username, password, profilePic } = credentials;
-    if (profilePic === undefined) profilePic = "";
     password = await hashPassword(password);
-    const dbdata = new User({ email, username, password, profilePic }).save();
+    const dbdata =await new User({ email, username, password, profilePic }).save();
     verificationEmail(email, username);
     const token = generateJwt(dbdata);
     return { status: 200, userToken: token };
@@ -53,6 +52,9 @@ export const loginUsersData = async (credentials: {
         throw new Error("Invalid Username");
       }
     }
+    if (user?.blocked) {
+      throw new Error("User is blocked");
+    }
     const validPassword = await comparePassword(password, user?.password);
     if (validPassword) {
       if (user?.verified === true) {
@@ -69,6 +71,8 @@ export const loginUsersData = async (credentials: {
       error.msg = "No account with this username";
     } else if (error?.message.includes("Email")) {
       error.msg = "No account with this email";
+    }else if (error?.message.includes("blocked")) {
+      error.msg = "User is blocked by admin";
     } else {
       error.msg = "Wrong password";
     }
