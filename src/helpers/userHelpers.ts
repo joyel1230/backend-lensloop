@@ -20,7 +20,12 @@ export const registerUsersData = async (credentials: any) => {
   try {
     let { email, username, password, profilePic } = credentials;
     password = await hashPassword(password);
-    const dbdata =await new User({ email, username, password, profilePic }).save();
+    const dbdata = await new User({
+      email,
+      username,
+      password,
+      profilePic,
+    }).save();
     verificationEmail(email, username);
     const token = generateJwt(dbdata);
     return { status: 200, userToken: token };
@@ -71,7 +76,7 @@ export const loginUsersData = async (credentials: {
       error.msg = "No account with this username";
     } else if (error?.message.includes("Email")) {
       error.msg = "No account with this email";
-    }else if (error?.message.includes("blocked")) {
+    } else if (error?.message.includes("blocked")) {
       error.msg = "User is blocked by admin";
     } else {
       error.msg = "Wrong password";
@@ -83,11 +88,39 @@ export const loginUsersData = async (credentials: {
 export const updatePass = async (email: string, newPass: string) => {
   try {
     const user = await User.findOne({ email });
-    if (!user) return { msg: "no account with this email",stat:false };
+    if (!user) return { msg: "no account with this email", stat: false };
     const password = await hashPassword(newPass);
-    await User.updateOne({ email }, { $set: { password,verified:false } });
+    await User.updateOne({ email }, { $set: { password, verified: false } });
     verificationEmail(email, user?.username);
     return { stat: true };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editUserProfile = async (
+  username: string,
+  newName: string,
+  newUsername: string
+) => {
+  try {
+    await User.updateOne(
+      { username: username },
+      { $set: { name: newName, username: newUsername } }
+    );
+    const editedUser = await User.findOne({ username: newUsername });
+    const token = generateJwt(editedUser);
+    return token;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editUserPass = async (username: string, newPass: string) => {
+  try {
+    const pass = await hashPassword(newPass);
+    await User.updateOne({ username: username }, { $set: { password: pass } });
+    return true;
   } catch (error) {
     console.log(error);
   }

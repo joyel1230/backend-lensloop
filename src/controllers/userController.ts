@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import {
+  editUserPass,
+  editUserProfile,
   fetchUsersData,
   loginUsersData,
   registerUsersData,
@@ -59,5 +61,27 @@ export const postForgotUser = async (req: Request, res: Response) => {
     }
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const patchEditProfile = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.params;
+    const { newName, newUsername } = req.body;
+    const userToken = await editUserProfile(username, newName, newUsername);
+    res.status(200).json({ msg: "changed",token:userToken });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const patchEditPass = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.params;
+    const { newPass } = req.body;
+    await editUserPass(username, newPass);
+    res.status(200).json({ msg: "changed" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
