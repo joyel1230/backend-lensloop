@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose";
 const postSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
-    ref:'userObjectId',
+    ref: "user",
     required: true,
   },
   image: {
@@ -12,31 +12,34 @@ const postSchema = new Schema({
   },
   date: {
     type: Date,
-    required: true,
+    default: Date.now(),
   },
   description: {
     type: String,
-    maxlength: 30,
+    maxlength: 100,
   },
   likes: {
     type: [
       {
         type: Schema.Types.ObjectId,
-        ref: "likedUserObjectId",
+        ref: "user",
       },
     ],
+    default: [],
   },
   comments: {
     type: [
       {
         type: Schema.Types.ObjectId,
-        ref: "commentObjectId",
+        ref: "comment",
       },
     ],
+    default: [],
   },
-  deleted:{
-    type:Boolean
-  }
+  deleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const Post = model("post", postSchema);

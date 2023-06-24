@@ -101,13 +101,21 @@ export const updatePass = async (email: string, newPass: string) => {
 export const editUserProfile = async (
   username: string,
   newName: string,
-  newUsername: string
+  newUsername: string,
+  newDpUrl: string
 ) => {
   try {
-    await User.updateOne(
-      { username: username },
-      { $set: { name: newName, username: newUsername } }
-    );
+    if (newDpUrl === null) {
+      await User.updateOne(
+        { username: username },
+        { $set: { name: newName, username: newUsername } }
+      );
+    } else {
+      await User.updateOne(
+        { username: username },
+        { $set: { name: newName, username: newUsername, profilePic: newDpUrl } }
+      );
+    }
     const editedUser = await User.findOne({ username: newUsername });
     const token = generateJwt(editedUser);
     return token;

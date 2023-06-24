@@ -67,9 +67,14 @@ export const postForgotUser = async (req: Request, res: Response) => {
 export const patchEditProfile = async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
-    const { newName, newUsername } = req.body;
-    const userToken = await editUserProfile(username, newName, newUsername);
-    res.status(200).json({ msg: "changed",token:userToken });
+    const { newName, newUsername, newDpUrl } = req.body;
+    const userToken = await editUserProfile(
+      username,
+      newName,
+      newUsername,
+      newDpUrl
+    );
+    res.status(200).json({ msg: "changed", token: userToken });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }

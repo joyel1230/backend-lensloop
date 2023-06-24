@@ -32,18 +32,20 @@ const userSchema = new Schema({
   profilePic: {
     type: String,
     trim: true,
-    default:'https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg'
+    default:'https://res.cloudinary.com/dzkyvaivw/image/upload/v1687499812/lensloop/Dp/user_oa7pge.png'
   },
   chatUsers: {
     type: [
       {
         type: Schema.Types.ObjectId,
-        ref:'ChatUserObjectId'
+        ref:'user'
       },
     ],
+    default:[]
   },
   online: {
     type: Boolean,
+    default:false
   },
   blocked: {
     type: Boolean,

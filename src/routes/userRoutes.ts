@@ -19,8 +19,8 @@ router.post("/login", postLoginUser);
 
 router.post("/forgot", postForgotUser);
 
-router.patch("/edit-profile/:username",verifyAuth, patchEditProfile);
+router.patch("/edit-profile/:username", verifyAuth, patchEditProfile);
 
-router.patch("/change-pass/:username",verifyAuth, patchEditPass);
+router.patch("/change-pass/:username", verifyAuth, patchEditPass);
 
 export default router;
