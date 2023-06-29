@@ -12,7 +12,7 @@ const postSchema = new Schema({
   },
   date: {
     type: Date,
-    default: Date.now(),
+    default: new Date(),
   },
   description: {
     type: String,
@@ -27,11 +27,11 @@ const postSchema = new Schema({
     ],
     default: [],
   },
-  comments: {
+  saved: {
     type: [
       {
         type: Schema.Types.ObjectId,
-        ref: "comment",
+        ref: "user",
       },
     ],
     default: [],

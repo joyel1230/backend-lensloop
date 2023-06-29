@@ -4,7 +4,6 @@ import { generateJwt } from "../services/jwt";
 export const loginAdminData = async (email: string) => {
   try {
     const token = generateJwt(email);
-    console.log(token);
     return token;
   } catch (error) {
     console.log(error,'jwterror');

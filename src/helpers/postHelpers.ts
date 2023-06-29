@@ -7,7 +7,7 @@ export const fetchPostsData = async (userId) => {
     if (userId === "") {
       posts = await Post.find({ deleted: false }).populate(
         "userId",
-        "username"
+        "username profilePic"
       );
     } else if (userId !== "admin") {
       posts = await Post.find({ userId: userId, deleted: false }).populate(
@@ -23,6 +23,27 @@ export const fetchPostsData = async (userId) => {
   }
 };
 
+export const fetchSavedPostsData = async (userId) => {
+  try {
+    const posts = await Post.find({ saved: { $in: [userId] } });
+    return posts;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchSinglePost = async (id) => {
+  try {
+    const post = await Post.find({ _id: id }).populate(
+      "userId",
+      "username profilePic"
+    );
+    return post;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const uploadPostData = async (
   userId: string,
   image: string,
@@ -33,6 +54,7 @@ export const uploadPostData = async (
       userId: userId,
       image: image,
       description: description,
+      date: new Date(),
     }).save();
     return newPost;
   } catch (error) {
@@ -47,6 +69,38 @@ export const deletePost = async (postId: string, value: boolean) => {
       { $set: { deleted: value } }
     );
     return newPost;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const likePost = async (
+  postId: string,
+  userId: string,
+  value: boolean
+) => {
+  try {
+    await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
+    if (value) {
+      await Post.updateOne({ _id: postId }, { $push: { likes: userId } });
+    }
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const savePost = async (
+  postId: string,
+  userId: string,
+  value: boolean
+) => {
+  try {
+    await Post.updateOne({ _id: postId }, { $pull: { saved: userId } });
+    if (value) {
+      await Post.updateOne({ _id: postId }, { $push: { saved: userId } });
+    }
+    return true;
   } catch (error) {
     console.log(error);
   }

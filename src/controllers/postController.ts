@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import {
   deletePost,
   fetchPostsData,
+  fetchSavedPostsData,
+  fetchSinglePost,
+  likePost,
+  savePost,
   uploadPostData,
 } from "../helpers/postHelpers";
 
@@ -12,6 +16,26 @@ export const getPosts = async (req: Request, res: Response) => {
       userId = "";
     }
     const postsData = await fetchPostsData(userId);
+    res.status(200).json(postsData);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getSavedPosts = async (req: Request, res: Response) => {
+  try {
+    let { userId } = req.query;
+    const postsData = await fetchSavedPostsData(userId);
+    res.status(200).json(postsData);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getPostById = async (req: Request, res: Response) => {
+  try {
+    let { id } = req.params;
+    const postsData = await fetchSinglePost(id);
     res.status(200).json(postsData);
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
@@ -37,3 +61,24 @@ export const patchDelete = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const patchLike = async (req: Request, res: Response) => {
+  try {
+    const { postId, userId, value } = req.body;
+    await likePost(postId, userId, value);
+    res.status(200).json({});
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const patchSavePost = async (req: Request, res: Response) => {
+  try {
+      const {userId,postId,value} = req.body
+      await savePost(postId,userId,value)
+      res.status(200).json({})
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
