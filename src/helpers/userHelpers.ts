@@ -4,6 +4,7 @@ import { comparePassword, hashPassword } from "../services/password";
 import { generateJwt } from "../services/jwt";
 import { UserDocument } from "../interfaces/user.interface";
 import { verificationEmail } from "../services/nodemailer";
+import { Follow } from "../models/follow";
 
 export const fetchUsersData = async (
   username: string | string[] | ParsedQs | ParsedQs[]
@@ -128,6 +129,63 @@ export const editUserPass = async (username: string, newPass: string) => {
   try {
     const pass = await hashPassword(newPass);
     await User.updateOne({ username: username }, { $set: { password: pass } });
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const changePrivate = async (username: string, value: boolean) => {
+  try {
+    await User.updateOne({ username: username }, { $set: { private: value } });
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const manageFollowers = async (
+  userId: string,
+  followerId: string,
+  value: boolean
+) => {
+  try {
+    await Follow.updateOne(
+      { _id: userId },
+      { $pull: { followers: followerId } },
+      { upsert: true }
+    );
+    if (value) {
+      await Follow.updateOne(
+        { _id: userId },
+        { $push: { followers: followerId } },
+        { upsert: true }
+      );
+    }
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const manageFollowing = async (
+  userId: string,
+  followerId: string,
+  value: boolean
+) => {
+  try {
+    await Follow.updateOne(
+      { _id: userId },
+      { $pull: { following: followerId } },
+      { upsert: true }
+    );
+    if (value) {
+      await Follow.updateOne(
+        { _id: userId },
+        { $push: { following: followerId } },
+        { upsert: true }
+      );
+    }
     return true;
   } catch (error) {
     console.log(error);

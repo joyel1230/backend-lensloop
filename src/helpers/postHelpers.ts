@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Post } from "../models/post";
+import { Report } from "../models/report";
 
 export const fetchPostsData = async (userId) => {
   try {
@@ -100,6 +101,23 @@ export const savePost = async (
     if (value) {
       await Post.updateOne({ _id: postId }, { $push: { saved: userId } });
     }
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const reportPost = async (
+  postId: string,
+  reporterId: string,
+  reason: string
+) => {
+  try {
+    const newReport =await new Report({
+      reporterId,
+      postId,
+      reason
+    }).save()
     return true;
   } catch (error) {
     console.log(error);

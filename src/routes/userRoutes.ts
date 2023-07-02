@@ -1,8 +1,12 @@
 import { Router } from "express";
 import {
+  getFollow,
   getUsers,
   patchEditPass,
   patchEditProfile,
+  patchPrivate,
+  postFollowers,
+  postFollowing,
   postForgotUser,
   postLoginUser,
   postRegisterUser,
@@ -22,5 +26,13 @@ router.post("/forgot", postForgotUser);
 router.patch("/edit-profile/:username", verifyAuth, patchEditProfile);
 
 router.patch("/change-pass/:username", verifyAuth, patchEditPass);
+
+router.patch("/private", verifyAuth, patchPrivate);
+
+router.post("/followers", verifyAuth, postFollowers);
+
+router.post("/following", verifyAuth, postFollowing);
+
+router.get("/follow", verifyAuth, getFollow);
 
 export default router;

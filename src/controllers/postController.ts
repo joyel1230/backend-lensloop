@@ -5,6 +5,7 @@ import {
   fetchSavedPostsData,
   fetchSinglePost,
   likePost,
+  reportPost,
   savePost,
   uploadPostData,
 } from "../helpers/postHelpers";
@@ -76,6 +77,16 @@ export const patchSavePost = async (req: Request, res: Response) => {
   try {
       const {userId,postId,value} = req.body
       await savePost(postId,userId,value)
+      res.status(200).json({})
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const postReport = async (req: Request, res: Response) => {
+  try {
+      const {reporterId,postId,reason} = req.body
+      await reportPost(postId,reporterId,reason)
       res.status(200).json({})
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });

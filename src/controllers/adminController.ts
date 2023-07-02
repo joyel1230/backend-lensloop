@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { changeUserVerify, fetchAllUsersData, loginAdminData } from "../helpers/adminHelpers";
+import { changeUserVerify, fetchAllUsersData, getAllReports, loginAdminData } from "../helpers/adminHelpers";
 
 export const postLogin = async (req: Request, res: Response) => {
   try {
@@ -27,6 +27,15 @@ export const patchUserStatus = async (req: Request, res: Response) => {
     const { status }:{status:{changeKey:string,bool:boolean}} = req.body
     await changeUserVerify(username,status);
     res.status(200).json({msg:'changed'})
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getReports = async (req: Request, res: Response) => {
+  try {
+    const data = await getAllReports();
+    res.status(200).json({reports:data})
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }

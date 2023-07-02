@@ -6,6 +6,7 @@ import {
   patchDelete,
   patchLike,
   patchSavePost,
+  postReport,
   postUpload,
 } from "../controllers/postController";
 import { verifyAuth } from "../middlewares/auth";
@@ -30,5 +31,7 @@ router.patch("/save",verifyAuth,patchSavePost)
 router.post("/comment",verifyAuth,postComment)
 
 router.get("/comment/:id",verifyAuth,getComment)
+
+router.post("/report",verifyAuth,postReport)
 
 export default router;

@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
 import { Verify } from "../models/verify";
 import { User } from "../models/user";
+import jwt from "jsonwebtoken";
 
-export const authCheck = (req: Request, res: Response) => {
-  res.status(200).json({ valid: true });
+export const authCheck =async (req: Request, res: Response) => {
+  const { authorization } = req.headers as { authorization: string };
+  const decoded:any= jwt.decode(authorization);
+  const data = await User.find({username:decoded?.username})
+  res.status(200).json({ valid: true,user:data });
 };
 
 export const emailVerifyCheck = async (req: Request, res: Response) => {

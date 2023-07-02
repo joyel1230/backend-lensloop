@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
 import {
+  changePrivate,
   editUserPass,
   editUserProfile,
   fetchUsersData,
   loginUsersData,
+  manageFollowers,
+  manageFollowing,
   registerUsersData,
   updatePass,
 } from "../helpers/userHelpers";
 import { User } from "../models/user";
+import { Follow } from "../models/follow";
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -86,6 +90,46 @@ export const patchEditPass = async (req: Request, res: Response) => {
     const { newPass } = req.body;
     await editUserPass(username, newPass);
     res.status(200).json({ msg: "changed" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const patchPrivate = async (req: Request, res: Response) => {
+  try {
+    const { username, value } = req.body;
+    await changePrivate(username, value);
+    res.status(200).json({ msg: "changed" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const postFollowers = async (req: Request, res: Response) => {
+  try {
+    const { userId, followerId, value } = req.body;
+    await manageFollowers(userId, followerId, value);
+    res.status(200).json({ msg: "changed" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const postFollowing = async (req: Request, res: Response) => {
+  try {
+    const { userId, followerId, value } = req.body;
+    await manageFollowing(userId, followerId, value);
+    res.status(200).json({ msg: "changed" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getFollow = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.query;
+    const data = await Follow.find({ _id: userId });
+    res.status(200).json({ users: data });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }

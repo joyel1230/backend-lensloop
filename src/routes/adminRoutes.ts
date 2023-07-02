@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllUsers, patchUserStatus, postLogin } from '../controllers/adminController';
+import { getAllUsers, getReports, patchUserStatus, postLogin } from '../controllers/adminController';
 import { verifyAuth } from '../middlewares/auth';
 
 const router: Router = Router();
@@ -10,6 +10,7 @@ router.get('/users',verifyAuth,getAllUsers);
 
 router.patch('/users/status/:username',verifyAuth,patchUserStatus);
 
+router.get('/posts/reports',verifyAuth,getReports);
 
 
 
