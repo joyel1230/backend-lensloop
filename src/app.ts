@@ -11,10 +11,12 @@ import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import postRoutes from "./routes/postRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import adsRoutes from "./routes/adsRoutes";
 
 dotenv.config();
 
 connect();
+
 
 const app: Express = express();
 const port: number = Number(process.env.PORT);
@@ -32,10 +34,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/ads", adsRoutes);
 
-app.get("/api", async (req: Request, res: Response) => {
 
-});
 
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
