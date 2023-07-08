@@ -80,3 +80,11 @@ export const patchDeleteAds = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const getRandomAds=async(req:Request,res:Response)=>{
+  try {
+    // const ads= await Ads.
+  } catch (error) {
+    console.log(error)
+  }
+}
