@@ -12,6 +12,7 @@ import {
   postRegisterUser,
 } from "../controllers/userController";
 import { verifyAuth } from "../middlewares/auth";
+import { getChat, postChat } from "../controllers/chatController";
 
 const router: Router = Router();
 
@@ -34,5 +35,9 @@ router.post("/followers", verifyAuth, postFollowers);
 router.post("/following", verifyAuth, postFollowing);
 
 router.get("/follow", verifyAuth, getFollow);
+
+router.post("/chat",verifyAuth,postChat)
+
+router.get("/chat",verifyAuth,getChat)
 
 export default router;

@@ -1,9 +1,10 @@
 import express, { Express, NextFunction, Request, Response } from "express";
-import createError from "http-errors";
 import logger from "morgan";
 import dotenv from "dotenv";
 import cors from "cors";
 import { connect } from "./config/db";
+import { Server } from "socket.io";
+import http from "http";
 
 // importing Routes
 
@@ -17,17 +18,33 @@ dotenv.config();
 
 connect();
 
-
 const app: Express = express();
 const port: number = Number(process.env.PORT);
 const corsOptions = {
   origin: "http://localhost:3000",
 };
-
 // Middleware for JSON parsing
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(logger("dev"));
+
+const server = http.createServer(app);
+export const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  socket.on("join_room", (data) => {
+    socket.join(data);
+  });
+
+  socket.on("send_message", (data) => {
+    socket.to(data.room).emit("recieve_message", data);
+  });
+});
 
 // Use the route files for specific paths
 app.use("/api/auth", authRoutes);
@@ -36,24 +53,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/ads", adsRoutes);
 
-
-
-// catch 404 and forward to error handler
-app.use((req: Request, res: Response, next: NextFunction) => {
-  next(createError(404));
-});
-
-// error handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
-});
-
 // Start the server
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
